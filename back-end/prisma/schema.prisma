@@ -1,0 +1,68 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                Int        @id @default(autoincrement())
+  email             String     @unique
+  password          String
+  username          String     @unique
+  receivedDonations Donation[] @relation("UserReceivedDonations")
+  profile           Profile?
+  bankCardId        Int?       @unique
+  bankCard          BankCard?  @relation(fields: [bankCardId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sentDonations Donation[] @relation("UserSentDonations")
+}
+
+model Profile {
+  id              Int      @id @default(autoincrement())
+  name            String
+  about           String
+  avatarImage     String
+  socialMediaURL  String
+  backgroundImage String
+  successMessage  String
+  ConfirmationMessage String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  userId Int  @unique
+  user   User @relation(fields: [userId], references: [id])
+}
+
+model BankCard {
+  id         Int      @id @default(autoincrement())
+  country    String
+  firstName  String
+  lastName   String
+  cardNumber String
+  expiryDate DateTime
+  year       Int
+  cvc        Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user User?
+}
+
+model Donation {
+  id                      Int      @id @default(autoincrement())
+  amount                  Int
+  specialMessage          String
+  socialURLOrBuyMeACoffee String
+  donor                   User     @relation("UserSentDonations", fields: [donorId], references: [id])
+  donorId                 Int
+  recipient               User     @relation("UserReceivedDonations", fields: [recipientId], references: [id])
+  recipientId             Int
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+}
