@@ -1,7 +1,7 @@
 import { Response, Request } from "express";
 import prisma from "../../prismaClient";
 
-export const updateProfile = async (req: Request, res: Response) => {
+export const updateProfile = async (req: Request, res: Response): Promise<void> => {
   const { avatarImage, name, about, socialMediaURL, backgroundImage, ConfirmationMessage } = req.body;
   const { id } = req.params;
 
@@ -11,10 +11,11 @@ export const updateProfile = async (req: Request, res: Response) => {
     });
 
     if (!existingProfile) {
-      return res.status(404).json({
+      res.status(404).json({
         success: false,
         message: "Profile not found",
       });
+      return;
     }
 
     const updatedProfile = await prisma.profile.update({

@@ -16,6 +16,6 @@ export const getAllUser = async (req: Request, res: Response) => {
     });
     res.status(200).send(users);
   } catch (err) {
-    res.status(500).send(`Error while getting users ${err}`);
+    res.status(500).json(`Error while getting users ${err}`);
   }
 };
